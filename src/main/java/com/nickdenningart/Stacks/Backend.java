@@ -32,6 +32,8 @@ import software.amazon.awscdk.services.lambda.Runtime;
 import software.amazon.awscdk.services.s3.BlockPublicAccess;
 import software.amazon.awscdk.services.s3.Bucket;
 import software.amazon.awscdk.services.s3.BucketEncryption;
+import software.amazon.awscdk.services.s3.CorsRule;
+import software.amazon.awscdk.services.s3.HttpMethods;
 import software.constructs.Construct;
 
 public class Backend extends Stack {
@@ -48,6 +50,11 @@ public class Backend extends Stack {
             .encryption(BucketEncryption.S3_MANAGED)
             .publicReadAccess(true)
             .blockPublicAccess(BlockPublicAccess.BLOCK_ACLS)
+            .cors(List.of(CorsRule.builder()
+                .allowedMethods(List.of(HttpMethods.GET))
+                .allowedOrigins(List.of("*"))
+                .allowedHeaders(List.of("*"))
+                .build()))
             // Don't delete bucket if stack is deleted
             .removalPolicy(RemovalPolicy.RETAIN)
             .build();
