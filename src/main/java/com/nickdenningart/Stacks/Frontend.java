@@ -25,15 +25,16 @@ import software.amazon.awscdk.services.codebuild.LinuxBuildImage;
 import software.amazon.awscdk.services.codebuild.Project;
 import software.amazon.awscdk.services.codebuild.S3ArtifactsProps;
 import software.amazon.awscdk.services.codebuild.Source;
+import software.amazon.awscdk.services.route53.AaaaRecord;
+import software.amazon.awscdk.services.route53.PublicHostedZone;
+import software.amazon.awscdk.services.route53.RecordTarget;
+import software.amazon.awscdk.services.route53.targets.CloudFrontTarget;
 import software.amazon.awscdk.services.s3.Bucket;
 import software.amazon.awscdk.services.s3.BucketEncryption;
 
 public class Frontend extends Stack {
-    public Frontend(final Construct scope, final String id) {
-        this(scope, id, null);
-    }
 
-    public Frontend(final Construct scope, final String id, final StackProps props) {
+    public Frontend(final Construct scope, final String id, final StackProps props, final PublicHostedZone hostedZone, final Certificate certificate) {
         super(scope, id, props);
 
         // S3 bucket to hold frontend
@@ -79,7 +80,9 @@ public class Frontend extends Stack {
             .build();
         
         // Cloudfront distribution
-        Distribution.Builder.create(this, "NDAFrontendCloudFront")
+        Distribution distribution = Distribution.Builder.create(this, "NDAFrontendCloudFront")
+            .domainNames(List.of("nickdenningart.com"))
+            .certificate(certificate)
             .defaultBehavior(BehaviorOptions.builder()
                 .origin(new S3Origin(bucket))
                 .allowedMethods(AllowedMethods.ALLOW_GET_HEAD_OPTIONS)
@@ -93,5 +96,11 @@ public class Frontend extends Stack {
                     .build()
             ))
             .build();
+       
+            // Create DNS record for cloudfront
+            AaaaRecord.Builder.create(this, "NDAFrontendCloudFrontDNSRecord")
+                .zone(hostedZone)
+                .target(RecordTarget.fromAlias(new CloudFrontTarget(distribution)))
+                .build();
     }
 }

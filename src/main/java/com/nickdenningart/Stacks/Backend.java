@@ -37,9 +37,6 @@ import software.amazon.awscdk.services.s3.HttpMethods;
 import software.constructs.Construct;
 
 public class Backend extends Stack {
-    public Backend(final Construct scope, final String id) {
-        this(scope, id, null);
-    }
 
     public Backend(final Construct scope, final String id, final StackProps props) {
         super(scope, id, props);

@@ -12,7 +12,7 @@ public class Infra {
     public static void main(final String[] args) {
         App app = new App();
 
-        new DNS(app, "NDADNS", StackProps.builder()
+        DNS dns = new DNS(app, "NDADNS", StackProps.builder()
                 .env(Environment.builder()
                         .account(System.getenv("CDK_DEFAULT_ACCOUNT"))
                         .region("us-east-1")
@@ -24,7 +24,10 @@ public class Infra {
                         .account(System.getenv("CDK_DEFAULT_ACCOUNT"))
                         .region("us-west-1")
                         .build())
-                .build());
+                .crossRegionReferences(true)
+                .build(),
+                dns.getHostedzone(),
+                dns.getCertificate());
 
         new Backend(app, "NDABackend", StackProps.builder()
                 .env(Environment.builder()
