@@ -12,6 +12,7 @@ import software.amazon.awscdk.services.certificatemanager.CertificateValidation;
 import software.amazon.awscdk.services.cloudfront.AllowedMethods;
 import software.amazon.awscdk.services.cloudfront.BehaviorOptions;
 import software.amazon.awscdk.services.cloudfront.Distribution;
+import software.amazon.awscdk.services.cloudfront.ErrorResponse;
 import software.amazon.awscdk.services.cloudfront.ViewerProtocolPolicy;
 import software.amazon.awscdk.services.cloudfront.origins.S3Origin;
 import software.amazon.awscdk.services.codebuild.Artifacts;
@@ -71,6 +72,7 @@ public class Frontend extends Stack {
                 .path("/")
                 .includeBuildId(false)
                 .bucket(bucket)
+                .encryption(false)
                 .packageZip(false)
                 .build()))
             .source(gitHubSource)
@@ -83,6 +85,13 @@ public class Frontend extends Stack {
                 .allowedMethods(AllowedMethods.ALLOW_GET_HEAD_OPTIONS)
                 .viewerProtocolPolicy(ViewerProtocolPolicy.REDIRECT_TO_HTTPS)
                 .build())
+            .errorResponses(List.of(
+                ErrorResponse.builder()
+                    .httpStatus(404)   
+                    .responseHttpStatus(200)
+                    .responsePagePath("/index.html")
+                    .build()
+            ))
             .build();
     }
 }
