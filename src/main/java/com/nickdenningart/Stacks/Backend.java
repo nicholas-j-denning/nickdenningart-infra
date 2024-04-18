@@ -82,7 +82,7 @@ public class Backend extends Stack {
         // Lambda function for /fractal
         Function fractalFunction = Function.Builder.create(this, "FractalFunction")
             .runtime(Runtime.JAVA_17)
-            .handler("org.springframework.cloud.function.adapter.aws.FunctionInvoker::handleRequest")
+            .handler("com.nickdenningart.fractal.Handler")
             // only here because code is required
             // should be replaced by running pipeline
             .code(Code.fromAsset("app.jar"))
