@@ -2,6 +2,8 @@ package com.nickdenningart.Stacks;
 
 import software.constructs.Construct;
 
+import java.util.List;
+
 import software.amazon.awscdk.Stack;
 import software.amazon.awscdk.StackProps;
 import software.amazon.awscdk.services.certificatemanager.Certificate;
@@ -16,6 +18,7 @@ public class DNS extends Stack {
 
     private final PublicHostedZone hostedZone;
     private final Certificate certificate;
+    private final Certificate imageCertificate;
 
     public DNS(final Construct scope, final String id, final StackProps props) {
         super(scope, id, props);
@@ -25,9 +28,13 @@ public class DNS extends Stack {
             .zoneName("nickdenningart.com")
             .build();
         
-        // SSL certificate in acm
+        // SSL certificates in acm
         certificate = Certificate.Builder.create(this, "NDACertificate")
             .domainName("nickdenningart.com")
+            .validation(CertificateValidation.fromDns(hostedZone))
+            .build();
+        imageCertificate = Certificate.Builder.create(this, "NDAImageCertificate")
+            .domainName("images.nickdenningart.com")
             .validation(CertificateValidation.fromDns(hostedZone))
             .build();
        
@@ -42,4 +49,5 @@ public class DNS extends Stack {
 
     public PublicHostedZone getHostedzone(){return hostedZone;}
     public Certificate getCertificate(){return certificate;}
+    public Certificate getImageCertificate(){return imageCertificate;}
 }

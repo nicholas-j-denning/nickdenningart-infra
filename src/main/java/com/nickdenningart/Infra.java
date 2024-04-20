@@ -34,7 +34,10 @@ public class Infra {
                         .account(System.getenv("CDK_DEFAULT_ACCOUNT"))
                         .region("us-west-1")
                         .build())
-                .build());
+                .crossRegionReferences(true)
+                .build(),
+                dns.getHostedzone(),
+                dns.getImageCertificate());
 
         app.synth();
     }
