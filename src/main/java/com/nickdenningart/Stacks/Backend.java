@@ -47,6 +47,7 @@ import software.amazon.awscdk.services.s3.Bucket;
 import software.amazon.awscdk.services.s3.BucketEncryption;
 import software.amazon.awscdk.services.s3.CorsRule;
 import software.amazon.awscdk.services.s3.HttpMethods;
+import software.amazon.awscdk.services.s3.ObjectOwnership;
 import software.amazon.awscdk.services.ssm.ParameterTier;
 import software.amazon.awscdk.services.ssm.StringParameter;
 import software.constructs.Construct;
@@ -61,7 +62,7 @@ public class Backend extends Stack {
             .bucketName("prod-nickdenningart-gallery")
             .encryption(BucketEncryption.S3_MANAGED)
             .publicReadAccess(true)
-            .blockPublicAccess(BlockPublicAccess.BLOCK_ACLS)
+            .objectOwnership(ObjectOwnership.BUCKET_OWNER_ENFORCED)
             .cors(List.of(CorsRule.builder()
                 .allowedMethods(List.of(HttpMethods.GET))
                 .allowedOrigins(List.of("*"))
